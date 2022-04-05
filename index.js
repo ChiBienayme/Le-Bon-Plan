@@ -2,6 +2,9 @@ const express = require("express");
 const handlebars = require("express-handlebars");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const app = express();
 
 // Handlebars config
@@ -15,50 +18,63 @@ app.use(express.static(path.join(__dirname, "/public")));
 // body du form de login
 app.use(express.urlencoded({ extended: true }));
 
+// Models
+const User = require("./models/userModel");
+
+// http://www.unit-conversion.info/texttools/random-string-generator/ : 30 characters
+const secret = "5uzhJWUDUDHpTCE5Wbl3uv5Svdo3cT";
+
+// Connexion à MongoDB
+mongoose
+  .connect(
+    "mongodb+srv://chibienayme:UCPC3bbpkpuoROqt@cluster0.pg9q2.mongodb.net/lebonplan?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+    }
+  )
+  .then(() => {
+    console.log("Connected to MongoDB");
+  });
+
+
 // ! Routes
 // TODO Homepage
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
 	// renvoie un fichier html
 	res.render("homepage", {
 		isLoggedIn: false,
 	});
 });
 
-// TODO Login
-app.get("/login", (req, res) => {
-	res.render("login");
-});
 
-app.post("/login", (req, res) => {
-	// créer un utilisateur
-
-	console.log(req.body);
-
-	// créer token
-	const token = "eyJqdqsdsqfg";
-
-	res.cookie("jwt", token);
-
-	res.redirect("/profile");
-});
-
-// TODO Signup
+// TODO Signup: email, password
 app.get("/signup", (req, res) => {
 	res.render("signup");
 });
 
-app.post("/signup", (req, res) => {
-	// créer un utilisateur
+app.post("/signup", async (req, res) => {
+	 // 1 - Hasher le mot de passe
+	 const hashedPassword = await bcrypt.hash(req.body.password, 12);
 
-	console.log(req.body);
-
-	// créer token
-	const token = "eyJqdqsdsqfg";
-
-	res.cookie("jwt", token);
-
+	 // 2 - Créer un utilisateur
+	 try {
+	   await User.create({
+		 email: req.body.email,
+		 password: hashedPassword,
+	   });
+	 } catch (err) {
+	   return res.status(400).json({
+		 message: "This account already exists",
+	   });
+	 }
+   
+	 res.status(201).json({
+	   message: `User ${req.body.email} created`,
+	 });
 	res.redirect("/profile");
 });
+
+
 
 // TODO Profile
 app.get("/profile", async (req, res) => {
@@ -69,15 +85,12 @@ app.get("/profile", async (req, res) => {
 		return res.redirect("/");
 	}
 
-	// const userData = await User.findById(userId);
-	// const userData = await Pool.query("SELECT * FROM users WHERE user_id=$1", [
-	// 	userId,
-	// ]);
+	const userData = await User.findById(userId);
+	
 
 	res.render("profile", {
 		// name: userData.name,
-		name: "Nicolas",
-		email: "nico@gmail.com",
+		
 	});
 });
 
