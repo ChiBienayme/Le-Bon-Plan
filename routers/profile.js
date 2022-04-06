@@ -25,23 +25,16 @@ mongoose
     console.log("Connected to MongoDB");
   });
 
-router.get("/", (req, res) => {
-  res.render("profile");
-});
-
 // ! Routes
 // TODO Profile
-router.get("/profile", async (req, res) => {
+router.get("/", async (req, res) => {
     const token = req.cookies.jwt;
   
     if (!token) {
       return res.redirect("/");
     }
   
-    res.render("profile", {
-      name: req.body.name,
-      email: req.body.email,
-    });
+    res.render("profile");
 });
 
 module.exports = router;

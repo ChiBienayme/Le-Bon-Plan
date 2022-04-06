@@ -10,7 +10,7 @@ app.use(cookieParser());
 
 // ! Routes
 // TODO Logout
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
     res.clearCookie("jwtCookie", { path: "/" }).redirect("/");
   });
 

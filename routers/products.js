@@ -8,7 +8,7 @@ app.use(express.json());
 
 // ! Routes
 // TODO Products
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
     res.render("products");
   });
 

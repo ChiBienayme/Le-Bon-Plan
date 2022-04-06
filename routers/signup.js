@@ -34,15 +34,12 @@ mongoose
     console.log("Connected to MongoDB");
   });
 
-router.get("/", (_req, res) => {
-  res.render("signup");
-});
 
 // ! Routes
 // TODO Signup: name, email, password
-router.get("/signup", (_req, res) => {
+router.get("/", (_req, res) => {
     res.render("signup");
-  });
+});
 
 router.post("/", async (req, res) => {
   // 1 - Hasher le mot de passe
