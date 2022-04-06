@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 const User = require("./models/userModel");
 
 // http://www.unit-conversion.info/texttools/random-string-generator/ : 30 characters
-// const secret = "5uzhJWUDUDHpTCE5Wbl3uv5Svdo3cT";
+const secret = "5uzhJWUDUDHpTCE5Wbl3uv5Svdo3cT";
 
 // dotenv
 require("dotenv").config();
@@ -69,6 +69,10 @@ app.post("/signup", async (req, res) => {
     });
   }
 
+  res.render("profile", {
+		isSignedUp: false,
+	});
+
   res.redirect("/profile");
 });
 
@@ -80,45 +84,55 @@ app.get("/profile", async (req, res) => {
     return res.redirect("/");
   }
 
-  res.render("profile", { 
-	name: req.body.name, 
-	email: req.body.email 
+  res.render("profile", {
+    name: req.body.name,
+    email: req.body.email,
   });
 });
 
 // TODO Login: email + password
+app.get("/login", (_req, res) => {
+  res.render("login");
+});
+
 app.post("/login", async (req, res) => {
-	const { email, password } = req.body;
-  
-	// 1 - Vérifier si le compte associé à l'email existe
-	const user = await User.findOne({ email });
-  
-	if (!user) {
-	  return res.status(400).json({
-		message: "Invalid email or password",
-	  });
-	}
-  
-	// 2 - Comparer le mot de passe au hash qui est dans la DB
-	const isPasswordValid = await bcrypt.compare(password, user.password);
-  
-	if (!isPasswordValid) {
-	  return res.status(400).json({
-		message: "Invalid email or password",
-	  });
-	}
-  
-	// 3 - Générer un token
-	const token = jwt.sign({ id: user._id }, secret);
-  
-	// 4 - On met le token dans un cookie
-	res.cookie("jwt", token, { httpOnly: true, secure: false });
-  
-	// 5 - Envoyer le cookie au name
-	res.json({
-	  message: "You are logged in",
+  const { email, password } = req.body;
+
+  // 1 - Vérifier si le compte associé à l'email existe
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(400).json({
+      message: "Invalid email or password",
+    });
+  }
+
+  // 2 - Comparer le mot de passe au hash qui est dans la DB
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    return res.status(400).json({
+      message: "Invalid email or password",
+    });
+  }
+
+  // 3 - Générer un token
+  const token = jwt.sign({ id: user._id }, secret);
+
+  // 4 - On met le token dans un cookie
+  res.cookie("jwt", token, { httpOnly: true, secure: false });
+
+  // 5 - Envoyer le cookie au name
+  // res.json({
+  //   message: "You are logged in",
+  // });
+
+  res.render("profile", {
+		isLoggedIn: false,
 	});
-  });
+
+  res.redirect("/profile");
+});
 
 // TODO Users
 app.get("/users", (req, res) => {
