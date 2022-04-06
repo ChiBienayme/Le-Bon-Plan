@@ -116,7 +116,7 @@ app.post("/login", async (req, res) => {
   
 	// 5 - Envoyer le cookie au name
 	res.json({
-	  message: "You are signed in",
+	  message: "You are logged in",
 	});
   });
 
