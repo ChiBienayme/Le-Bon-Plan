@@ -22,30 +22,25 @@ app.use(express.urlencoded({ extended: true }));
 // Models
 const User = require("../models/userModel");
 
-// Code serveur
-const secret = process.env.SERVER_CODE;
-
 // dotenv
 require("dotenv").config();
 
-const {  MONGODB_URI, SERVER_CODE } = process.env;
-
 // Connexion à MongoDB
 mongoose
-  .connect(MONGODB_URI, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
   })
   .then(() => {
     console.log("Connected to MongoDB");
   });
 
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
   res.render("signup");
 });
 
 // ! Routes
-// TODO Signup: email, password
-router.get("/signup", (req, res) => {
+// TODO Signup: name, email, password
+router.get("/signup", (_req, res) => {
     res.render("signup");
   });
 
@@ -66,15 +61,15 @@ router.post("/", async (req, res) => {
     });
   }
    
-  res.status(400).json({
-    message: `Account ${req.body.email} is created`,
-  });
+//   res.status(400).json({
+//     message: `Account ${req.body.email} is created`,
+//   });
 
   res.render("profile", {
     isSignedUp: true,
   });
 
-    res.redirect("/profile");
+    // res.redirect("/profile");
 });
 
 module.exports = router;

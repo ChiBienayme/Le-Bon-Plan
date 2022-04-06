@@ -1,19 +1,17 @@
 
 
 {{#if isSignedUp}}
-    <h2>You are successfully signed in. Your profile</h2>
-    <p>Name: {{req.body.name}}</p>
-    <p>Email: {{req.body.email}}</p>
+    <h2>You are successfully signed up.</h2>
 {{else}}
     <p> This account already exists. </p>
 {{/if}}
 
-
+{{!-- 
 {{#if isLoggedIn}}
     <p>You are connected</p>
 {{else}}
     <p>You are disconnected</p>
-{{/if}}
+{{/if}} --}}
 
 
 <a href="/">Logout</a>

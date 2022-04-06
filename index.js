@@ -43,11 +43,9 @@ const secret = process.env.SERVER_CODE;
 // dotenv
 require("dotenv").config();
 
-const { PORT, MONGODB_URI, SERVER_CODE } = process.env;
-
 // Connexion à MongoDB
 mongoose
-  .connect(MONGODB_URI, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
   })
   .then(() => {
@@ -83,4 +81,4 @@ app.get("/", async (req, res) => {
 });
 
 // Start server
-app.listen(process.env.PORT, () => console.log(`Listening on the ${PORT}`));
+app.listen(process.env.PORT, () => console.log(`Listening on the ${process.env.PORT}`));

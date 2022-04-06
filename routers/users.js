@@ -10,10 +10,6 @@ app.set("view engine", "handlebars");
 // Middlewares
 app.use(express.json());
 
-
-
-
-
 // ! Routes
 // TODO Users
 app.get("/", (req, res) => {

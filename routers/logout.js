@@ -7,8 +7,6 @@ const router = express.Router();
 app.use(express.json());
 app.use(cookieParser());
 
-// dotenv
-require("dotenv").config();
 
 // ! Routes
 // TODO Logout

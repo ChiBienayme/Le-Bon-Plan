@@ -13,20 +13,12 @@ app.set("view engine", "handlebars");
 // Middlewares
 app.use(cookieParser());
 
-// Models
-const User = require("../models/userModel");
-
-// Code serveur
-const secret =  process.env.SERVER_CODE;
-
 // dotenv
 require("dotenv").config();
 
-const { MONGODB_URI } = process.env;
-
 // Connexion à MongoDB
 mongoose
-  .connect(MONGODB_URI, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
   })
   .then(() => {
@@ -34,32 +26,22 @@ mongoose
   });
 
 router.get("/", (req, res) => {
-  res.render("signup");
+  res.render("profile");
 });
 
 // ! Routes
 // TODO Profile
-router.get("/", async (req, res) => {
-    try {
-        jwt.verify(req.cookies.jwtCookie, secret);
-      } catch (err) {
-        console.log(err);
-        return res.status(401).json({
-          message: "Unauthorized",
-        });
-      }
-    
-      if (!req.cookies.jwtCookie) {
-        return res.redirect("login");
-      }
-    
-      // On vérifie que ce token contient bien l'ID d'un utilisateur admin
-      const decoded = jwt.verify(req.cookies.jwtCookie, secret);
-      const userId = req.params._Id;
-      const userData = await User.findById(decoded.userId)
-      
-    
-      res.render("profile", { username: userData.name });
+router.get("/profile", async (req, res) => {
+    const token = req.cookies.jwt;
+  
+    if (!token) {
+      return res.redirect("/");
+    }
+  
+    res.render("profile", {
+      name: req.body.name,
+      email: req.body.email,
     });
+});
 
 module.exports = router;

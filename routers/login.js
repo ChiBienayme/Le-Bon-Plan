@@ -28,36 +28,35 @@ const secret = process.env.SERVER_CODE;
 // dotenv
 require("dotenv").config();
 
-const { MONGODB_URI, SERVER_CODE } = process.env;
-
 // Connexion à MongoDB
 mongoose
-  .connect(MONGODB_URI, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
   })
   .then(() => {
     console.log("Connected to MongoDB");
   });
 
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
   res.render("login");
 });
 
 // ! Routes
 // TODO Login: email + password
-router.get("/", (_req, res) => {
-  res.render("login");
-});
+// router.get("/", (_req, res) => {
+//   res.render("login");
+// });
 
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
 
-  try {
     // 1 - Vérifier si le compte associé à l'email existe
     const user = await User.findOne({ email });
 
+    // VERIFIER SI L'UTILISATEUR EXISTE
     if (!user) {
       return res.status(400).json({
+        success: false,
         message: "Invalid email or password",
       });
     }
@@ -79,19 +78,16 @@ router.post("/", async (req, res) => {
 
     // 5 - Envoyer le cookie au name
     res.json({
+      success: true,
       message: "You are logged in",
     });
 
-    res.render("profile", {
-      isLoggedIn: true,
-    });
+    // res.render("profile", {
+    //   isLoggedIn: true,
+    // });
 
-    res.redirect("/profile");
-
-  } catch (err) {
-    console.log(err);
-    res.status(400).json({ message: "An error happened" });
-  }
+    // res.redirect("/profile");
+  
 });
 
 module.exports = router;
